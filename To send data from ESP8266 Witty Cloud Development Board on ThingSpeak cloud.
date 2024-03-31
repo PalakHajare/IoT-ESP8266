@@ -1,0 +1,42 @@
+#include <ESP8266WiFi.h> //library file for esp8266
+#include <ThingSpeak.h>
+
+// pins for witty board
+#define led 2
+#define red 15
+#define green 12
+#define blue 13
+#define ldr A0
+
+WiFiClient client;
+long myChannelNumber = 2477941;
+const char myWriteAPIKey[] = "mwa0000029962034";
+WiFiServer server(80);
+
+void setup() {
+// put your setup code here, to run once:
+pinMode(led, OUTPUT);
+pinMode(red, OUTPUT);
+pinMode(blue, OUTPUT);
+pinMode(green, OUTPUT);
+
+2023-24 ENP361-1 Experiment 11 Palak Hajare(A-05)
+Serial.begin(9600);
+WiFi.softAP("5G", "bmqm7213");
+while(WiFi.status() != WL_CONNECTED){
+Serial.print('.');
+delay(200);
+}
+Serial.println();
+Serial.println("Witty board connected");
+Serial.println(WiFi.localIP());
+ThingSpeak.begin(client);
+
+void loop() {
+// put your main code here, to run repeatedly:
+int value = analogRead(ldr);
+Serial.println(value);
+ThingSpeak.writeField(myChannelNumber, 1, value,
+myWriteAPIKey);
+delay(1000);
+}
